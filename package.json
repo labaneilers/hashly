@@ -1,0 +1,39 @@
+{
+  "name": "pipeline",
+  "version": "0.1.0",
+  "description": "Experiment",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "file": "0.2.1",
+    "mkdirp": "~0.3.4",
+    "marked": "~0.2.8",
+    "matchdep": "~0.1.2",
+    "grunt": "~0.4.0",
+    "MD5": "~1.2.0",
+    "image-size": "~0.2.3"
+  },
+  "main": "./lib/cli",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vistaprint/SkinnyJS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vistaprint/SkinnyJS/issues"
+  },
+  "keywords": [
+    "javascript",
+    "jQuery"
+  ],
+  "author": {
+    "name": "Vistaprint",
+    "url": "http://www.vistaprint.com"
+  },
+  "contributors": [
+    {
+      "name": "Laban Eilers"
+    }
+  ],
+  "license": "Apache 2"
+}
