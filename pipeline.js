@@ -2,25 +2,8 @@ var fs = require("fs");
 var path = require("path");
 var md5 = require('MD5');
 var sizeOf = require('image-size');
-var args = require("minimist")(process.argv.slice(2), { boolean: ["v", "verbose"]});
 
-var parseArgs = function(args, cwd) {
-
-  if (args._.length === 0) {
-    throw new Error("No source directory path specified.");
-  }
-  if (args._.length === 1) {
-    throw new Error("No target directory path specified.");
-  }
-
-  return {
-    source: path.resolve(cwd, args._[0]),
-    target: path.resolve(cwd, args._[1]),
-    verbose: args.v || args.verbose || false
-  };
-};
-
-var _parsedArgs = parseArgs(args, process.cwd());
+var _options;
 
 var recurseDir = function(fullPath, files) {
   if (!files) {
@@ -103,8 +86,8 @@ var createManifestForDirectory = function(sourceDir, targetDir) {
 
     var entry = createManifestEntry(fullPath, sourceDir, targetDir);
 
-    if (_parsedArgs.verbose) {
-      console.log(fullPath + " > " + entry.hashedPathPhysical);
+    if (_options.logger) {
+      _options.logger(fullPath + " > " + entry.hashedPathPhysical);
     }
 
     copySync(entry.pathPhysical, entry.hashedPathPhysical);
@@ -113,11 +96,13 @@ var createManifestForDirectory = function(sourceDir, targetDir) {
   });
 };
 
-var processDirectory = function(sourceDir, targetDir) {
+exports.processDirectory = function(sourceDir, targetDir, options) {
 
-  if (_parsedArgs.verbose) {
-    console.log("Processing directory: " + sourceDir + " > " + targetDir);
-    console.log("---------------------");
+  _options = options;
+
+  if (_options.logger) {
+    _options.logger("Processing directory: " + sourceDir + " > " + targetDir);
+    _options.logger("---------------------");
   }
 
   var manifestPath = path.join(targetDir, "manifest.json");
@@ -146,17 +131,16 @@ var processDirectory = function(sourceDir, targetDir) {
     return newEntry;
   });
 
-  if (_parsedArgs.verbose) {
-    console.log("Writing manifest: " + manifestPath);
+  if (_options.logger) {
+    _options.logger("Writing manifest: " + manifestPath);
   }
 
   // Write the manifest
   fs.writeFileSync(manifestPath, JSON.stringify(trimmedManifest, null, 4));
 
-  if (_parsedArgs.verbose) {
-    console.log("---------------------");
-    console.log("Success");
+  if (_options.logger) {
+    _options.logger("---------------------");
+    _options.logger("Success");
   }
 };
 
-processDirectory(_parsedArgs.source, _parsedArgs.target);
