@@ -41,11 +41,19 @@ var _imageTypes = {
   ".webp": true
 };
 
+var copySync = function(sourceFile, targetFile) {
+  var dir = path.dirname(targetFile);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  };
+  fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
+};
+
 var getRootRelativePath = function(basePath, fullPath) {
   return path.sep + path.relative(basePath, fullPath);
 };
 
-var processFile = function(fullPath, basePath, targetBasePath) {
+var createManifestEntry = function(fullPath, basePath, targetBasePath) {
 
   var relativePath = path.relative(basePath, fullPath);
   var targetPath = path.resolve(targetBasePath, relativePath);
@@ -71,10 +79,45 @@ var processFile = function(fullPath, basePath, targetBasePath) {
   return manifestEntry;
 };
 
-var processDirectory = function(sourceDir, targetDir) {
+var createManifestForDirectory = function(sourceDir, targetDir) {
   return recurseDir(sourceDir).map(function(fullPath) { 
-    return processFile(fullPath, sourceDir, targetDir);
+    return createManifestEntry(fullPath, sourceDir, targetDir);
   });
+};
+
+var processDirectory = function(sourceDir, targetDir) {
+  var manifestPath = path.join(targetDir, "manifest.json");
+  
+  // Delete the manifest if it exists, so we won't be confused
+  // if the manifest is there, but the process failed in the middle.
+  if (fs.existsSync(manifestPath)) {
+    fs.unlinkSync(manifestPath);
+  }
+
+  // Generate the manifest data, which includes hashed file names and sizes
+  var manifest = createManifestForDirectory(sourceDir, targetDir);
+
+  // Copy the files to the hashed paths
+  manifest.forEach(function(entry) {
+    copySync(entry.pathPhysical, entry.hashedPathPhysical);
+  });
+
+  var trimmedManifest = manifest.map(function(entry) {
+    var newEntry = {
+      path: entry.path,
+      hashedPath: entry.hashedPath
+    };
+
+    if (entry.width) {
+      newEntry.width = entry.width;
+      newEntry.height = entry.height;
+    }
+
+    return newEntry;
+  });
+
+  // Write the manifest
+  fs.writeFileSync(manifestPath, JSON.stringify(trimmedManifest, null, 4));
 };
 
 // console.log(getHashCode("/Library/WebServer/Documents/pipeline/assets/replace.css"));
@@ -83,4 +126,4 @@ var processDirectory = function(sourceDir, targetDir) {
 //   return fullPath + ": " + getHashCode(fullPath);
 // }));
 
-console.log(processDirectory("/Library/WebServer/Documents/pipeline/assets/", "/Library/WebServer/Documents/pipeline/temp/"));
+processDirectory("/Library/WebServer/Documents/pipeline/assets/", "/Library/WebServer/Documents/pipeline/temp/");
