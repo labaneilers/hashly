@@ -48,25 +48,33 @@ var getRootRelativePath = function(basePath, fullPath) {
 var processFile = function(fullPath, basePath, targetBasePath) {
 
   var relativePath = path.relative(basePath, fullPath);
-
   var targetPath = path.resolve(targetBasePath, relativePath);
   var targetDir = path.dirname(targetPath);
-  var hashedPath = getHashedFileName(fullPath, targetDir);
-  var relativeHashedPath = path.relative(targetBasePath, hashedPath);
+  var hashedPathPhysical = getHashedFileName(fullPath, targetDir);
+  var hashedPath = path.relative(targetBasePath, hashedPathPhysical);
 
   var manifestEntry = {
-    path: relativePath,
+    path: path.sep + relativePath,
     pathPhysical: fullPath,
-    hashedPath: relativeHashedPath,
-    hashedPathPhysical: hashedPath
+    hashedPath: path.sep + hashedPath,
+    hashedPathPhysical: hashedPathPhysical
   };
 
-  // var ext = path.extname(fullPath).toLowerCase();
-  // if (_imageTypes[ext]) {
-
-  // }
+  // Get size info for images
+  var ext = path.extname(fullPath).toLowerCase();
+  if (_imageTypes[ext]) {
+    var dimensions = sizeOf(fullPath);
+    manifestEntry.width = dimensions.width;
+    manifestEntry.height = dimensions.height;
+  }
 
   return manifestEntry;
+};
+
+var processDirectory = function(sourceDir, targetDir) {
+  return recurseDir(sourceDir).map(function(fullPath) { 
+    return processFile(fullPath, sourceDir, targetDir);
+  });
 };
 
 // console.log(getHashCode("/Library/WebServer/Documents/pipeline/assets/replace.css"));
@@ -75,6 +83,4 @@ var processFile = function(fullPath, basePath, targetBasePath) {
 //   return fullPath + ": " + getHashCode(fullPath);
 // }));
 
-console.log(recurseDir("/Library/WebServer/Documents/pipeline/assets").map(function(fullPath) { 
-  return processFile(fullPath, "/Library/WebServer/Documents/pipeline/assets", "/Library/WebServer/Documents/pipeline/temp");
-}));
+console.log(processDirectory("/Library/WebServer/Documents/pipeline/assets/", "/Library/WebServer/Documents/pipeline/temp/"));
