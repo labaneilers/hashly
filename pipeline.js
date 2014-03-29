@@ -1,7 +1,26 @@
 var fs = require("fs");
-var path = require("path")
+var path = require("path");
 var md5 = require('MD5');
 var sizeOf = require('image-size');
+var args = require("minimist")(process.argv.slice(2), { boolean: ["v", "verbose"]});
+
+var parseArgs = function(args, cwd) {
+
+  if (args._.length === 0) {
+    throw new Error("No source directory path specified.");
+  }
+  if (args._.length === 1) {
+    throw new Error("No target directory path specified.");
+  }
+
+  return {
+    source: path.resolve(cwd, args._[0]),
+    target: path.resolve(cwd, args._[1]),
+    verbose: args.v || args.verbose || false
+  };
+};
+
+var _parsedArgs = parseArgs(args, process.cwd());
 
 var recurseDir = function(fullPath, files) {
   if (!files) {
@@ -81,11 +100,26 @@ var createManifestEntry = function(fullPath, basePath, targetBasePath) {
 
 var createManifestForDirectory = function(sourceDir, targetDir) {
   return recurseDir(sourceDir).map(function(fullPath) { 
-    return createManifestEntry(fullPath, sourceDir, targetDir);
+
+    var entry = createManifestEntry(fullPath, sourceDir, targetDir);
+
+    if (_parsedArgs.verbose) {
+      console.log(fullPath + " > " + entry.hashedPathPhysical);
+    }
+
+    copySync(entry.pathPhysical, entry.hashedPathPhysical);
+
+    return entry;
   });
 };
 
 var processDirectory = function(sourceDir, targetDir) {
+
+  if (_parsedArgs.verbose) {
+    console.log("Processing directory: " + sourceDir + " > " + targetDir);
+    console.log("---------------------");
+  }
+
   var manifestPath = path.join(targetDir, "manifest.json");
   
   // Delete the manifest if it exists, so we won't be confused
@@ -94,13 +128,9 @@ var processDirectory = function(sourceDir, targetDir) {
     fs.unlinkSync(manifestPath);
   }
 
-  // Generate the manifest data, which includes hashed file names and sizes
+  // Generate the manifest data, which includes hashed file names and sizes,
+  // and copies the files
   var manifest = createManifestForDirectory(sourceDir, targetDir);
-
-  // Copy the files to the hashed paths
-  manifest.forEach(function(entry) {
-    copySync(entry.pathPhysical, entry.hashedPathPhysical);
-  });
 
   var trimmedManifest = manifest.map(function(entry) {
     var newEntry = {
@@ -116,14 +146,17 @@ var processDirectory = function(sourceDir, targetDir) {
     return newEntry;
   });
 
+  if (_parsedArgs.verbose) {
+    console.log("Writing manifest: " + manifestPath);
+  }
+
   // Write the manifest
   fs.writeFileSync(manifestPath, JSON.stringify(trimmedManifest, null, 4));
+
+  if (_parsedArgs.verbose) {
+    console.log("---------------------");
+    console.log("Success");
+  }
 };
 
-// console.log(getHashCode("/Library/WebServer/Documents/pipeline/assets/replace.css"));
-
-// console.log(recurseDir("/Library/WebServer/Documents/pipeline/assets").map(function(fullPath) { 
-//   return fullPath + ": " + getHashCode(fullPath);
-// }));
-
-processDirectory("/Library/WebServer/Documents/pipeline/assets/", "/Library/WebServer/Documents/pipeline/temp/");
+processDirectory(_parsedArgs.source, _parsedArgs.target);
