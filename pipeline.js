@@ -3,30 +3,40 @@ var path = require("path");
 var md5 = require('MD5');
 var sizeOf = require('image-size');
 
+// Singleton for global, cross cutting options
 var _options;
 
-var recurseDir = function(fullPath, files) {
-  if (!files) {
-    files = [];
-  }
+// File system utils
 
+// Recurses a directory, executing processFile on each entry
+var recurseDir = function(fullPath, processFile) {
   if (fs.statSync(fullPath).isFile()) {
-    files.push(fullPath);
-    return files;
+    processFile(fullPath);
+    return;
   }
 
   fs.readdirSync(fullPath).forEach(function(file) {
     var childPath = path.join(fullPath, file)
-    recurseDir(childPath, files);
+    recurseDir(childPath, processFile);
   });
-
-  return files;
 };
 
+// Copies a file synchronously, creating any necessary directories
+var copySync = function(sourceFile, targetFile) {
+  var dir = path.dirname(targetFile);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  };
+  fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
+};
+
+// Gets an MD5 hash for the specified fullPath
 var getHashCode = function(fullPath) {
   return md5(fs.readFileSync(fullPath));
 };
 
+// Given a full path and a target directory, will return a hashed filename
+// of a file which corresponds to the original, based in targetDir.
 var getHashedFileName = function(fullPath, targetDir) {
   var ext = path.extname(fullPath);
   var basename = path.basename(fullPath, ext);
@@ -34,6 +44,7 @@ var getHashedFileName = function(fullPath, targetDir) {
   return path.join(targetDir, basename + "-hc" + hashCode + ext);
 };
 
+// File types that should have sizes calculated and included in the manifest json
 var _imageTypes = {
   ".jpg": true,
   ".png": true,
@@ -43,28 +54,19 @@ var _imageTypes = {
   ".webp": true
 };
 
-var copySync = function(sourceFile, targetFile) {
-  var dir = path.dirname(targetFile);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  };
-  fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
-};
-
-var getRootRelativePath = function(basePath, fullPath) {
-  return path.sep + path.relative(basePath, fullPath);
-};
-
+// Calculates the hashcode, target hashed filename, and dimensions (for image file types)
+// and returns a structure with this data
 var createManifestEntry = function(fullPath, basePath, targetBasePath) {
-
   var relativePath = path.relative(basePath, fullPath);
   var targetPath = path.resolve(targetBasePath, relativePath);
   var targetDir = path.dirname(targetPath);
   var hashedPathPhysical = getHashedFileName(fullPath, targetDir);
   var hashedPath = path.relative(targetBasePath, hashedPathPhysical);
 
+  // TODO probably going to need some work on windows to manage forward/back slashes
+  // for virtual vs physical paths
   var manifestEntry = {
-    path: path.sep + relativePath,
+    path: path.sep + relativePath, // Generate root relative (virtual) paths, which is what a webserver will want
     pathPhysical: fullPath,
     hashedPath: path.sep + hashedPath,
     hashedPathPhysical: hashedPathPhysical
@@ -81,8 +83,12 @@ var createManifestEntry = function(fullPath, basePath, targetBasePath) {
   return manifestEntry;
 };
 
+// Creates an array of manifest entries, and copies the source files
+// to their target locations.
 var createManifestForDirectory = function(sourceDir, targetDir) {
-  return recurseDir(sourceDir).map(function(fullPath) { 
+
+  var manifest = [];
+  recurseDir(sourceDir, function(fullPath) { 
 
     var entry = createManifestEntry(fullPath, sourceDir, targetDir);
 
@@ -92,12 +98,21 @@ var createManifestForDirectory = function(sourceDir, targetDir) {
 
     copySync(entry.pathPhysical, entry.hashedPathPhysical);
 
-    return entry;
+    manifest.push(entry);
   });
+
+  return manifest;
 };
 
+// Public API
+// Processes the sourceDir, copies the hashed versions of all files to their corresponding
+// location in targetDir. Creates a manifest json file that documents all the transformations,
+// and includes the pixel sizes of all images.
 exports.processDirectory = function(sourceDir, targetDir, options) {
 
+  // Store global options.
+  // This is to prevent having to pass around data for cross-cutting concerns (i.e. logging)
+  // and poluting all the function signatures
   _options = options;
 
   if (_options.logger) {
@@ -117,6 +132,9 @@ exports.processDirectory = function(sourceDir, targetDir, options) {
   // and copies the files
   var manifest = createManifestForDirectory(sourceDir, targetDir);
 
+  // Trim the manifest, eliminating physical file paths,
+  // which are irrelevant, since the target directory will likely
+  // be deployed to a web server at a different physical path.
   var trimmedManifest = manifest.map(function(entry) {
     var newEntry = {
       path: entry.path,
@@ -135,7 +153,7 @@ exports.processDirectory = function(sourceDir, targetDir, options) {
     _options.logger("Writing manifest: " + manifestPath);
   }
 
-  // Write the manifest
+  // Write the manifest to a file
   fs.writeFileSync(manifestPath, JSON.stringify(trimmedManifest, null, 4));
 
   if (_options.logger) {
