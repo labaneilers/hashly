@@ -1,28 +1,29 @@
 #!/usr/bin/env node
 
 var path = require("path");
-var args = require("minimist")(process.argv.slice(2), { boolean: ["v", "verbose"]});
+var args = require("minimist")(process.argv.slice(2), {
+    boolean: ["v", "verbose"]
+});
 var pipeline = require("../lib/pipeline");
 
 if (args._.length === 0) {
-  throw new Error("No source directory path specified.");
+    throw new Error("No source directory path specified.");
 }
 
 if (args._.length === 1) {
-  throw new Error("No target directory path specified.");
+    throw new Error("No target directory path specified.");
 }
 
 var cwd = process.cwd();
 
 var parsedArgs = {
-  source: path.resolve(cwd, args._[0]),
-  target: path.resolve(cwd, args._[1]),
-  verbose: args.v || args.verbose || false
+    source: path.resolve(cwd, args._[0]),
+    target: path.resolve(cwd, args._[1]),
+    verbose: args.v || args.verbose || false
 };
 
 pipeline.processDirectory(
-  parsedArgs.source, 
-  parsedArgs.target, 
-  {
-    logger: parsedArgs.verbose ? console.log : null 
-  });
+    parsedArgs.source,
+    parsedArgs.target, {
+        logger: parsedArgs.verbose ? console.log : null
+    });
