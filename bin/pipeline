@@ -1,32 +1,42 @@
 #!/usr/bin/env node
 
 var path = require("path");
-var args = require("minimist")(process.argv.slice(2), {
-    "boolean": ["v", "verbose"],
-    "string": ["filter"]
-});
+var parseArgs = require("minimist");
 var pipeline = require("../lib/pipeline");
 
-if (args._.length === 0) {
-    throw new Error("No source directory path specified.");
-}
-
-if (args._.length === 1) {
-    throw new Error("No target directory path specified.");
-}
+var args = require("minimist")(process.argv.slice(2), {
+    "boolean": ["v", "verbose", "c", "clean"],
+    "string": ["filter"]
+});
 
 var cwd = process.cwd();
+var sourceDir = cwd;
 
-var parsedArgs = {
-    source: path.resolve(cwd, args._[0]),
-    target: path.resolve(cwd, args._[1]),
-    verbose: args.v || args.verbose || false,
-    filter: args.f || args.filter
-};
+if (args._.length >= 1) {
+    sourceDir = path.resolve(cwd, args._[0]);
+}
 
-pipeline.processDirectory(
-    parsedArgs.source,
-    parsedArgs.target, {
-        logger: parsedArgs.verbose ? console.log : null,
-        filter: parsedArgs.filter
-    });
+var targetDir = sourceDir;
+
+if (args._.length >= 2) {
+    targetDir = path.resolve(cwd, args._[1]);
+}
+
+var verbose = args.v || args.verbose || false;
+var filter = args.f || args.filter || null;
+var clean = args.c || args.clean || false;
+
+console.log("s: " + sourceDir + ", t: " + targetDir);
+
+if (clean) {
+    pipeline.clean(sourceDir);
+} else {
+    pipeline.processDirectory(
+        sourceDir,
+        targetDir, 
+        {
+            logger: verbose ? console.log : null,
+            filter: filter
+        });
+}
+
