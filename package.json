@@ -15,21 +15,27 @@
     "image-size": "~0.2.3",
     "minimist": "0.0.8"
   },
-  "main": "./lib/cli",
+  "main": "./lib/pipeline",
+  "directories": {
+    "lib": "./lib"
+  },
+  "bin": {
+    "pipeline": "./bin/pipeline"
+  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/vistaprint/SkinnyJS.git"
+    "url": "git://github.com/labaneilers/pipeline.js.git"
   },
   "bugs": {
-    "url": "https://github.com/vistaprint/SkinnyJS/issues"
+    "url": "https://github.com/labaneilers/pipeline.js/issues"
   },
   "keywords": [
     "javascript",
     "jQuery"
   ],
   "author": {
-    "name": "Vistaprint",
-    "url": "http://www.vistaprint.com"
+    "name": "Laban Eilers",
+    "url": "http://www.labaneilers.com"
   },
   "contributors": [
     {
