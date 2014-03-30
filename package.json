@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Experiment",
   "directories": {
-    "test": "test"
+    "lib": "./lib"
   },
   "dependencies": {
     "file": "0.2.1",
@@ -13,12 +13,10 @@
     "grunt": "~0.4.0",
     "MD5": "~1.2.0",
     "image-size": "~0.2.3",
-    "minimist": "0.0.8"
+    "minimist": "0.0.8",
+    "minimatch": "~0.2.14"
   },
   "main": "./lib/pipeline",
-  "directories": {
-    "lib": "./lib"
-  },
   "bin": {
     "pipeline": "./bin/pipeline"
   },
