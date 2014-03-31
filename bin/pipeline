@@ -5,8 +5,15 @@ var parseArgs = require("minimist");
 var pipeline = require("../lib/pipeline");
 
 var args = parseArgs(process.argv.slice(2), {
-    "boolean": ["v", "verbose", "c", "clean"],
-    "string": ["f", "filter", "m", "manifestFormat"]
+    "boolean": ["verbose", "clean", "continue"],
+    "string": ["filter", "manifestFormat"],
+    "alias": {
+        "verbose" : "v",
+        "clean": "c",
+        "filter": "f",
+        "manifestFormat": "m",
+        "continue": ["i", "ignore"]
+    }
 });
 
 var cwd = process.cwd();
@@ -23,13 +30,18 @@ if (args._.length >= 2) {
 }
 
 var options = {
-    logger: (args.v || args.verbose) ? console.log : null,
-    filter: args.f || args.filter || null,
-    manifestFormat: args.m || args.manifestFormat
+    logger: args.verbose ? console.log : null,
+    filter: args.filter || null,
+    manifestFormat: args.manifestFormat,
+    continueOnError: args["continue"] || false
 };
 
+var exitCode = 0;
+
 if (args.c || args.clean || false) {
-    pipeline.clean(sourceDir, options);
+    exitCode = pipeline.clean(sourceDir, options);
 } else {
-    pipeline.processDirectory(sourceDir, targetDir, options);
+    exitCode = pipeline.processDirectory(sourceDir, targetDir, options);
 }
+
+process.exit(exitCode);
