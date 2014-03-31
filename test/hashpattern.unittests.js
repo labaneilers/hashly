@@ -1,7 +1,7 @@
 "use strict";
 
 var assert = require("chai").assert;
-var hashpattern = require("../lib/hashpattern");
+var hashpattern = require("../lib/hash-pattern");
 
 describe("hashpattern", function () {
 
