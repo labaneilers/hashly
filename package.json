@@ -14,7 +14,9 @@
     "MD5": "~1.2.0",
     "image-size": "~0.2.3",
     "minimist": "0.0.8",
-    "minimatch": "~0.2.14"
+    "minimatch": "~0.2.14",
+    "mocha": "~1.18.2",
+    "grunt-cli": "~0.1.13"
   },
   "main": "./lib/pipeline",
   "bin": {
