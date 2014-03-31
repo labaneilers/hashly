@@ -1,46 +1,45 @@
 {
-  "name": "pipeline",
-  "version": "0.1.0",
-  "description": "Experiment",
-  "directories": {
-    "lib": "./lib"
-  },
-  "dependencies": {
-    "file": "0.2.1",
-    "mkdirp": "~0.3.4",
-    "marked": "~0.2.8",
-    "matchdep": "~0.1.2",
-    "grunt": "~0.4.0",
-    "MD5": "~1.2.0",
-    "image-size": "~0.2.3",
-    "minimist": "0.0.8",
-    "minimatch": "~0.2.14",
-    "mocha": "~1.18.2",
-    "grunt-cli": "~0.1.13"
-  },
-  "main": "./lib/pipeline",
-  "bin": {
-    "pipeline": "./bin/pipeline"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/labaneilers/pipeline.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/labaneilers/pipeline.js/issues"
-  },
-  "keywords": [
-    "javascript",
-    "jQuery"
-  ],
-  "author": {
-    "name": "Laban Eilers",
-    "url": "http://www.labaneilers.com"
-  },
-  "contributors": [
-    {
-      "name": "Laban Eilers"
-    }
-  ],
-  "license": "Apache 2"
+    "name": "pipeline",
+    "version": "0.1.0",
+    "description": "Experiment",
+    "directories": {
+        "lib": "./lib"
+    },
+    "dependencies": {
+        "file": "0.2.1",
+        "mkdirp": "~0.3.4",
+        "marked": "~0.2.8",
+        "matchdep": "~0.1.2",
+        "MD5": "~1.2.0",
+        "image-size": "~0.2.3",
+        "minimist": "0.0.8",
+        "minimatch": "~0.2.14"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.0",
+        "mocha": "~1.18.2"
+    },
+    "main": "./lib/pipeline",
+    "bin": {
+        "pipeline": "./bin/pipeline"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/labaneilers/pipeline.js.git"
+    },
+    "bugs": {
+        "url": "https://github.com/labaneilers/pipeline.js/issues"
+    },
+    "keywords": [
+        "javascript",
+        "jQuery"
+    ],
+    "author": {
+        "name": "Laban Eilers",
+        "url": "http://www.labaneilers.com"
+    },
+    "contributors": [{
+        "name": "Laban Eilers"
+    }],
+    "license": "Apache 2"
 }
