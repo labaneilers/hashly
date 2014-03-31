@@ -4,7 +4,7 @@ var path = require("path");
 var parseArgs = require("minimist");
 var pipeline = require("../lib/pipeline");
 
-var args = require("minimist")(process.argv.slice(2), {
+var args = parseArgs(process.argv.slice(2), {
     "boolean": ["v", "verbose", "c", "clean"],
     "string": ["filter"]
 });
@@ -26,17 +26,13 @@ var verbose = args.v || args.verbose || false;
 var filter = args.f || args.filter || null;
 var clean = args.c || args.clean || false;
 
-console.log("s: " + sourceDir + ", t: " + targetDir);
+var options = {
+    logger: verbose ? console.log : null,
+    filter: filter
+};
 
 if (clean) {
-    pipeline.clean(sourceDir);
+    pipeline.clean(sourceDir, options);
 } else {
-    pipeline.processDirectory(
-        sourceDir,
-        targetDir, 
-        {
-            logger: verbose ? console.log : null,
-            filter: filter
-        });
+    pipeline.processDirectory(sourceDir, targetDir, options);
 }
-
