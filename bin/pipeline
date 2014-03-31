@@ -6,7 +6,7 @@ var pipeline = require("../lib/pipeline");
 
 var args = parseArgs(process.argv.slice(2), {
     "boolean": ["v", "verbose", "c", "clean"],
-    "string": ["filter"]
+    "string": ["f", "filter", "m", "manifestFormat"]
 });
 
 var cwd = process.cwd();
@@ -22,16 +22,13 @@ if (args._.length >= 2) {
     targetDir = path.resolve(cwd, args._[1]);
 }
 
-var verbose = args.v || args.verbose || false;
-var filter = args.f || args.filter || null;
-var clean = args.c || args.clean || false;
-
 var options = {
-    logger: verbose ? console.log : null,
-    filter: filter
+    logger: (args.v || args.verbose) ? console.log : null,
+    filter: args.f || args.filter || null,
+    manifestFormat: args.m || args.manifestFormat
 };
 
-if (clean) {
+if (args.c || args.clean || false) {
     pipeline.clean(sourceDir, options);
 } else {
     pipeline.processDirectory(sourceDir, targetDir, options);
