@@ -1,0 +1,12 @@
+usage: hashly [option option=parameter ...] <source> [destination]
+
+If source is omitted, the current working directory will be used.
+If destination is omitted, hashed files will be written alongside the source files.
+
+options:
+  -h, --help               Print help (this message) and exit.
+  -v, --verbose            Emit verbose output
+  -f, --filter             A globbing expression. Any matching files will not be processed.
+  -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
+                           Default is "json"
+  -i, --ignore             Ignore errors. Otherwise, hashly will abort on the first error.

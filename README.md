@@ -3,9 +3,9 @@ hashly
 
 hashly is a build-time tool which enables cache-busting for static files (images, JavaScript, CSS, etc). 
 
-Hashly copies a directory structure containing static files, inserting an MD5 hash code (based on the contents of the file) into each filename. It creates a manifest file which contains a mapping between the original and hashed file names, which can be used in web applications to map canonical file names to their specific, hashed URL. This way, when a file's content changes, its URL changes; this forces CDN, proxies, and browsers to download the new file, even if they had an old version cached.
+hashly copies a directory structure containing static files, inserting an MD5 hash code (based on the contents of the file) into each filename. It creates a manifest file which contains a mapping between the original and hashed file names, which can be used in web applications to map canonical file names to their specific, hashed URL. This way, when a file's content changes, its URL changes; this forces CDN, proxies, and browsers to download the new file, even if they had an old version cached.
 
-This is a particularly elegant solution which allows zero-downtime deployments, with backwards AND forwards compatibility between different versions of your web application and their corresponding static files. Filename-based cache busting is much more reliable than using other techniques (i.e. querystrings with version numbers, 304 HTTP codes), and allows you to cache aggresively without fear of not being able to update static files. 
+This is a particularly elegant solution which allows zero-downtime deployments, with backwards AND forwards compatibility between different versions of your web application and their corresponding static files. Filename-based cache busting is much more reliable than using other techniques (i.e. querystrings with version numbers, 304 HTTP codes), and allows you to cache aggressively without fear of not being able to update static files. 
 
 Why hashly?
 ------------------
@@ -14,6 +14,25 @@ hashly is used as a build-time task to process static files. Once the processing
 Once static files are deployed, you would deploy your web application code, including the manifest file created by hashly, to your web application servers. When your application starts, it should load the manifest file, and begin constructing any URLs to static assets using the hashed filenames.
 
 You should configure your CDN to set HTTP headers to force your content to be cached for as long as possible. 
+
+Usage
+------------------
+
+```
+usage: hashly [option option=parameter ...] <source> [destination]
+
+If source is omitted, the current working directory will be used.
+If destination is omitted, hashed files will be written alongside the source files.
+
+options:
+  -h, --help               Print help (this message) and exit.
+  -v, --verbose            Emit verbose output
+  -f, --filter             A globbing expression. Any matching files will not be processed.
+  -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
+                           Default is "json"
+  -i, --ignore             Ignore errors. Otherwise, hashly will abort on the first error.
+```
+
 
 Image sizes
 ------------------
@@ -59,4 +78,4 @@ If you want to get fancy, you could create a component that creates responsive i
 
 Inspiration
 ------------------
-Inspired by cache-busting techniques developed at Vistaprint, as wel as by the Ruby on Rails Asset Pipeline.
+Inspired by cache-busting techniques developed at Vistaprint, as well as by the Ruby on Rails Asset Pipeline.

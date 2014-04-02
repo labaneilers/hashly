@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 
 var path = require("path");
+var fs = require("fs");
 var parseArgs = require("minimist");
 var hashly = require("../lib/hashly");
 
 var args = parseArgs(process.argv.slice(2), {
-    "boolean": ["verbose", "clean", "continue"],
-    "string": ["filter", "manifestFormat"],
+    "boolean": ["verbose", "clean", "ignore", "help"],
+    "string": ["filter", "manifest-format"],
     "alias": {
         "verbose": "v",
         "clean": "c",
         "filter": "f",
-        "manifestFormat": "m",
-        "continue": ["i", "ignore"]
+        "manifest-format": "m",
+        "ignore": "i",
+        "help": "h"
     }
 });
+
+if (args.help) {
+    console.log(fs.readFileSync(path.resolve(__dirname, "../lib/usage.txt"), "utf8"));
+    process.exit(0);
+}
 
 var cwd = process.cwd();
 var sourceDir = cwd;
@@ -32,7 +39,7 @@ if (args._.length >= 2) {
 var options = {
     logger: args.verbose ? console.log : null,
     filter: args.filter || null,
-    manifestFormat: args.manifestFormat,
+    manifestFormat: args["manifest-format"],
     continueOnError: args["continue"] || false
 };
 
