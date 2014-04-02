@@ -2,13 +2,13 @@
 
 var path = require("path");
 var parseArgs = require("minimist");
-var pipeline = require("../lib/pipeline");
+var hashly = require("../lib/hashly");
 
 var args = parseArgs(process.argv.slice(2), {
     "boolean": ["verbose", "clean", "continue"],
     "string": ["filter", "manifestFormat"],
     "alias": {
-        "verbose" : "v",
+        "verbose": "v",
         "clean": "c",
         "filter": "f",
         "manifestFormat": "m",
@@ -39,9 +39,9 @@ var options = {
 var exitCode = 0;
 
 if (args.c || args.clean || false) {
-    exitCode = pipeline.clean(sourceDir, options);
+    exitCode = hashly.clean(sourceDir, options);
 } else {
-    exitCode = pipeline.processDirectory(sourceDir, targetDir, options);
+    exitCode = hashly.processDirectory(sourceDir, targetDir, options);
 }
 
 process.exit(exitCode);
