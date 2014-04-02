@@ -6,10 +6,6 @@
         "lib": "./lib"
     },
     "dependencies": {
-        "file": "0.2.1",
-        "mkdirp": "~0.3.4",
-        "marked": "~0.2.8",
-        "matchdep": "~0.1.2",
         "MD5": "~1.2.0",
         "image-size": "~0.2.3",
         "minimist": "0.0.8",
