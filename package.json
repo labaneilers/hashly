@@ -1,9 +1,12 @@
 {
     "name": "hashly",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Renames static files with a hashcode for cache busting",
     "directories": {
         "lib": "./lib"
+    },
+    "engines": {
+        "node": ">=0.8.0"
     },
     "dependencies": {
         "MD5": "~1.2.0",
