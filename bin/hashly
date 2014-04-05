@@ -45,19 +45,20 @@ var options = {
     continueOnError: args["continue"] || false
 };
 
-if (args.plugins) {
-    options.plugins = pluginLoader.loadDirectory(path.resolve(cwd, args.plugins));
-
-    options.plugins.forEach(function (plugin) {
-        console.log("Loaded plugin " + plugin.name + "...");
-    });
-}
-
 var exitCode = 0;
 
 if (args.c || args.clean || false) {
     exitCode = hashly.clean(sourceDir, options);
 } else {
+
+    if (args.plugins) {
+        options.plugins = pluginLoader.loadDirectory(path.resolve(cwd, args.plugins));
+
+        options.plugins.forEach(function (plugin) {
+            console.log("Loaded plugin " + plugin.name + "...");
+        });
+    }
+
     exitCode = hashly.processDirectory(sourceDir, targetDir, options);
 }
 
