@@ -37,13 +37,12 @@ describe("hashly", function () {
 
     describe("#createManifestEntry()", function () {
 
-        it("should properly resolve virtual and physical paths in source and target directories on unix", function () {
-
+        var getCreateManifestEntry = function (sep, hashedFileName) {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("hashpattern", {
                 getHashedFileName: function () {
-                    return "/alt/b/c/file-hc12345.png";
+                    return hashedFileName;
                 }
             });
 
@@ -51,12 +50,15 @@ describe("hashly", function () {
                 return "";
             });
 
-            hashly.__set__("path", getMockPath("/"));
+            hashly.__set__("path", getMockPath(sep));
 
             hashly.__set__("_options", {});
 
-            var method = hashly.__get__("createManifestEntry");
+            return hashly.__get__("createManifestEntry");
+        };
 
+        it("should properly resolve virtual and physical paths in source and target directories on unix", function () {
+            var method = getCreateManifestEntry("/", "/alt/b/c/file-hc12345.png");
             var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
 
             assert.equal(entry.pathPhysical, "/a/b/c/file.png");
@@ -66,31 +68,33 @@ describe("hashly", function () {
         });
 
         it("should properly resolve virtual and physical paths in source and target directories on windows", function () {
-
-            var hashly = rewire("../lib/hashly");
-
-            hashly.__set__("hashpattern", {
-                getHashedFileName: function () {
-                    return "C:\\alt\\b\\c\\file-hc12345.png";
-                }
-            });
-
-            hashly.__set__("getHashCode", function () {
-                return "";
-            });
-
-            hashly.__set__("path", getMockPath("\\"));
-
-            hashly.__set__("_options", {});
-
-            var method = hashly.__get__("createManifestEntry");
-
+            var method = getCreateManifestEntry("\\", "C:\\alt\\b\\c\\file-hc12345.png");
             var entry = method("C:\\a\\b\\c\\file.png", "C:\\a\\b", "C:\\alt\\b");
 
             assert.equal(entry.pathPhysical, "C:\\a\\b\\c\\file.png");
             assert.equal(entry.path, "/c/file.png");
             assert.equal(entry.hashedPath, "/c/file-hc12345.png");
             assert.equal(entry.hashedPathPhysical, "C:\\alt\\b\\c\\file-hc12345.png");
+        });
+
+        it("should generate matching pathPhysical and hashedPathPhysical when source and target are the same on unix", function () {
+            var method = getCreateManifestEntry("/", "/a/b/c/file-hc12345.png");
+            var entry = method("/a/b/c/file.png", "/a/b", "/a/b");
+
+            assert.equal(entry.pathPhysical, "/a/b/c/file.png");
+            assert.equal(entry.path, "/c/file.png");
+            assert.equal(entry.hashedPath, "/c/file-hc12345.png");
+            assert.equal(entry.hashedPathPhysical, "/a/b/c/file-hc12345.png");
+        });
+
+        it("should generate matching pathPhysical and hashedPathPhysical when source and target are the same on windows", function () {
+            var method = getCreateManifestEntry("\\", "C:\\a\\b\\c\\file-hc12345.png");
+            var entry = method("C:\\a\\b\\c\\file.png", "C:\\a\\b", "C:\\a\\b");
+
+            assert.equal(entry.pathPhysical, "C:\\a\\b\\c\\file.png");
+            assert.equal(entry.path, "/c/file.png");
+            assert.equal(entry.hashedPath, "/c/file-hc12345.png");
+            assert.equal(entry.hashedPathPhysical, "C:\\a\\b\\c\\file-hc12345.png");
         });
     });
 
