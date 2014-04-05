@@ -51,9 +51,18 @@ if (args.c || args.clean || false) {
     exitCode = hashly.clean(sourceDir, options);
 } else {
 
-    if (args.plugins) {
-        options.plugins = pluginLoader.loadDirectory(path.resolve(cwd, args.plugins));
+    options.plugins = [];
 
+    // Load default plugins
+    var pluginsDir = path.resolve(__dirname, "../plugins");
+    pluginLoader.loadDirectory(pluginsDir, options.plugins);
+
+    // Load additional plugins specified on the command line
+    if (args.plugins) {
+        pluginLoader.loadDirectory(path.resolve(cwd, args.plugins), options.plugins);
+    }
+
+    if (options.verbose) {
         options.plugins.forEach(function (plugin) {
             console.log("Loaded plugin " + plugin.name + "...");
         });
