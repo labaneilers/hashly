@@ -37,7 +37,7 @@ describe("hashly", function () {
 
     describe("#createManifestEntry()", function () {
 
-        var getCreateManifestEntry = function (sep, hashedFileName) {
+        var getCreateManifestEntry = function (sep, hashedFileName, options) {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("hashpattern", {
@@ -52,7 +52,7 @@ describe("hashly", function () {
 
             hashly.__set__("path", getMockPath(sep));
 
-            hashly.__set__("_options", {});
+            hashly.__set__("_options", options || {});
 
             return hashly.__get__("createManifestEntry");
         };
@@ -95,6 +95,27 @@ describe("hashly", function () {
             assert.equal(entry.path, "/c/file.png");
             assert.equal(entry.hashedPath, "/c/file-hc12345.png");
             assert.equal(entry.hashedPathPhysical, "C:\\a\\b\\c\\file-hc12345.png");
+        });
+
+        it("should call specified plugins and append their output to the manifestEntry", function () {
+
+            var mockPlugin = {
+                processFile: function (entry) {
+                    return {
+                        pluginFileName: "plugin:" + entry.path
+                    };
+                }
+            };
+
+            var method = getCreateManifestEntry("/", "/alt/b/c/file-hc12345.png", {
+                plugins: [
+                    mockPlugin
+                ]
+            });
+
+            var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
+
+            assert.equal(entry.pluginFileName, "plugin:/c/file.png");
         });
     });
 
