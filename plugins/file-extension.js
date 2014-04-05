@@ -15,5 +15,3 @@ exports.processFile = function (manifestEntry) {
         ext: path.extname(manifestEntry.path)
     }
 };
-
-exports.name = "file-extension";
