@@ -3,7 +3,7 @@
 var assert = require("chai").assert;
 var hashpattern = require("../lib/hash-pattern");
 
-describe("hashpattern", function () {
+describe("hash-pattern", function () {
 
     describe("#isHashedFile()", function () {
 
