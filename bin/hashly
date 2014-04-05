@@ -4,17 +4,19 @@ var path = require("path");
 var fs = require("fs");
 var parseArgs = require("minimist");
 var hashly = require("../lib/hashly");
+var pluginLoader = require("../lib/plugin-loader");
 
 var args = parseArgs(process.argv.slice(2), {
     "boolean": ["verbose", "clean", "ignore", "help"],
-    "string": ["filter", "manifest-format"],
+    "string": ["filter", "manifest-format", "plugins"],
     "alias": {
         "verbose": "v",
         "clean": "c",
         "filter": "f",
         "manifest-format": "m",
         "ignore": "i",
-        "help": "h"
+        "help": "h",
+        "plugins": "p"
     }
 });
 
@@ -42,6 +44,14 @@ var options = {
     manifestFormat: args["manifest-format"],
     continueOnError: args["continue"] || false
 };
+
+if (args.plugins) {
+    options.plugins = pluginLoader.loadDirectory(path.resolve(cwd, args.plugins));
+
+    options.plugins.forEach(function (plugin) {
+        console.log("Loaded plugin " + plugin.name + "...");
+    });
+}
 
 var exitCode = 0;
 
