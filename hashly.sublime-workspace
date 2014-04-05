@@ -72,6 +72,7 @@
 	},
 	"file_history":
 	[
+		"/Library/WebServer/Documents/hashly/hashly.sublime-project",
 		"/Library/WebServer/Documents/bb/index.html",
 		"/Library/WebServer/Documents/bb/main.js",
 		"/Library/WebServer/Documents/skinnysite/.gitignore",
@@ -198,8 +199,7 @@
 		"/Library/WebServer/Documents/skinny/js/jquery.modalDialog.unobtrusive.js",
 		"/Library/WebServer/Documents/skinny/site/modal-dialogs.md",
 		"/Library/WebServer/Documents/skinny/site/javascripts/modal-dialogs-demo-content.js",
-		"/Library/WebServer/Documents/skinny/js/jquery.modalDialog.deviceFixes.js",
-		"/Library/WebServer/Documents/skinny/js/jquery.modalDialog.getSettings"
+		"/Library/WebServer/Documents/skinny/js/jquery.modalDialog.deviceFixes.js"
 	],
 	"find":
 	{
