@@ -119,4 +119,44 @@ describe("hashly", function () {
         });
     });
 
+    describe("#createManifestForDirectory()", function () {
+
+        it("should call copySync and return a manifest", function () {
+            var hashly = rewire("../lib/hashly");
+
+            hashly.__set__("fsutil", {
+                recurseDirSync: function (sourceDir, processFile) {
+                    assert.equal(sourceDir, "/a/b");
+
+                    processFile("/a/b/c/file.png");
+                },
+                copySync: function (source, target) {
+                    assert.equal(source, "/a/b/c/file.png");
+                    assert.equal(target, "/alt/b/c/b/file-hc12345.png");
+                }
+            });
+
+            hashly.__set__("createManifestEntry", function (fullPath /*, sourceDir, targetDir */ ) {
+                assert.equal(fullPath, "/a/b/c/file.png");
+
+                return {
+                    path: "/c/b/file.png",
+                    pathPhysical: "/a/b/c/file.png",
+                    hashedPath: "/c/b/file-hc12345.png",
+                    hashedPathPhysical: "/alt/b/c/b/file-hc12345.png",
+                };
+            });
+
+            hashly.__set__("_options", {});
+
+            var createManifestForDirectory = hashly.__get__("createManifestForDirectory");
+
+            var data = createManifestForDirectory("/a/b", "/alt/b");
+
+            assert.equal(data.manifest.length, 1);
+            assert.equal(data.manifest[0].path, "/c/b/file.png");
+
+        });
+    });
+
 });
