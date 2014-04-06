@@ -7,14 +7,14 @@ var hashly = require("../lib/hashly");
 var pluginLoader = require("../lib/plugin-loader");
 
 var args = parseArgs(process.argv.slice(2), {
-    "boolean": ["verbose", "clean", "ignore", "help"],
-    "string": ["exclude", "manifest-format", "plugins"],
+    "boolean": ["verbose", "clean", "ignore-errors", "help"],
+    "string": ["exclude", "include", "manifest-format", "plugins"],
     "alias": {
         "verbose": "v",
         "clean": "c",
         "exclude": "e",
         "manifest-format": "m",
-        "ignore": "i",
+        "ignore-errors": "i",
         "help": "h",
         "plugins": "p"
     }
@@ -44,8 +44,9 @@ var options = {
         process.stderr.write(msg + "\n");
     },
     exclude: args.exclude || null,
+    include: args.include || null,
     manifestFormat: args["manifest-format"],
-    continueOnError: args["continue"] || false
+    continueOnError: args["ignore-errors"] || false
 };
 
 var exitCode = 0;
