@@ -8,11 +8,11 @@ var pluginLoader = require("../lib/plugin-loader");
 
 var args = parseArgs(process.argv.slice(2), {
     "boolean": ["verbose", "clean", "ignore", "help"],
-    "string": ["filter", "manifest-format", "plugins"],
+    "string": ["exclude", "manifest-format", "plugins"],
     "alias": {
         "verbose": "v",
         "clean": "c",
-        "filter": "f",
+        "exclude": "e",
         "manifest-format": "m",
         "ignore": "i",
         "help": "h",
@@ -40,7 +40,7 @@ if (args._.length >= 2) {
 
 var options = {
     logger: args.verbose ? console.log : null,
-    filter: args.filter || null,
+    exclude: args.exclude || null,
     manifestFormat: args["manifest-format"],
     continueOnError: args["continue"] || false
 };

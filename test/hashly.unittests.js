@@ -157,6 +157,30 @@ describe("hashly", function () {
             assert.equal(data.manifest[0].path, "/c/b/file.png");
 
         });
+
+        it("should return an empty manifest if filters are applied", function () {
+            var hashly = rewire("../lib/hashly");
+
+            hashly.__set__("fsutil", {
+                recurseDirSync: function (sourceDir, processFile) {
+                    assert.equal(sourceDir, "/a/b");
+
+                    processFile("/a/b/c/file.png");
+                }
+            });
+
+            hashly.__set__("_options", {
+                shouldBeExcluded: function ( /* fullPath */ ) {
+                    return true;
+                }
+            });
+
+            var createManifestForDirectory = hashly.__get__("createManifestForDirectory");
+
+            var data = createManifestForDirectory("/a/b", "/alt/b");
+
+            assert.equal(data.manifest.length, 0);
+        });
     });
 
 });
