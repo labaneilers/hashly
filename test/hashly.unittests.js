@@ -185,12 +185,8 @@ describe("hashly", function () {
 
     describe("#processDirectory()", function () {
 
-        it("should call writeFileSync with manifest data", function () {
+        var getHashly = function () {
             var hashly = rewire("../lib/hashly");
-
-            var options = {
-                manifestFormat: "json"
-            };
 
             hashly.__set__("serializerFactory", {
                 getSerializer: function (manifestFormat) {
@@ -242,9 +238,66 @@ describe("hashly", function () {
                 };
             });
 
-            var exitCode = hashly.processDirectory("/a/b", "/alt/b", options);
+            return hashly;
+        };
+
+        it("should call writeFileSync with manifest data", function () {
+
+            var options = {
+                manifestFormat: "json"
+            };
+
+            var exitCode = getHashly().processDirectory("/a/b", "/alt/b", options);
 
             assert.equal(exitCode, 0);
+        });
+
+        it("should return -1 and log an error if createManifestForDirectory throws an exception", function () {
+
+            var logErrorCalled = false;
+
+            var options = {
+                manifestFormat: "json",
+                logError: function (msg) {
+                    assert.isTrue(msg.indexOf("Something bad happened") >= 0);
+                    logErrorCalled = true;
+                }
+            };
+
+            var hashly = getHashly();
+            hashly.__set__("createManifestForDirectory", function () {
+                throw new Error("Something bad happened");
+            });
+
+            var exitCode = hashly.processDirectory("/a/b", "/alt/b", options);
+
+            assert.equal(exitCode, -1);
+            assert.isTrue(logErrorCalled);
+        });
+
+        it("should return -1 and log an error if the source directory doesn't exist", function () {
+            var hashly = rewire("../lib/hashly");
+
+            hashly.__set__("fsutil", {
+                existsSync: function (file) {
+                    assert.equal(file, "/a/b");
+                    return false;
+                }
+            });
+
+            var logErrorCalled = false;
+
+            var options = {
+                logError: function (msg) {
+                    assert.isTrue(msg.indexOf("/a/b") >= 0);
+                    logErrorCalled = true;
+                }
+            };
+
+            var exitCode = hashly.processDirectory("/a/b", "/alt/b", options);
+
+            assert.equal(exitCode, -1);
+            assert.isTrue(logErrorCalled);
         });
     });
 });
