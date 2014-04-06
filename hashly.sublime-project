@@ -1,8 +1,5 @@
 {
-	"folders":
-	[
-		{
-			"path": "/Library/WebServer/Documents/hashly"
-		}
-	]
+    "folders": [{
+        "path": "./"
+    }]
 }
