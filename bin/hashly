@@ -40,6 +40,9 @@ if (args._.length >= 2) {
 
 var options = {
     logger: args.verbose ? console.log : null,
+    logError: function (msg) {
+        process.stderr.write(msg + "\n");
+    },
     exclude: args.exclude || null,
     manifestFormat: args["manifest-format"],
     continueOnError: args["continue"] || false
