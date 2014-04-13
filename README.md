@@ -41,6 +41,26 @@ options:
   --ignore-errors          Ignore errors. Otherwise, hashly will abort on the first error.
 ```
 
+Examples
+------------------
+
+Process the current directory in place:
+
+```shell
+hashly
+```
+
+Process the directory 'source' and copy hashed files to the 'processed' directory:
+
+```shell
+hashly ./source ./processed
+```
+
+Write the manifest in tab-delimited format:
+
+```shell
+hashly ./source ./processed -m "tab"
+```
 
 Image sizes
 ------------------
