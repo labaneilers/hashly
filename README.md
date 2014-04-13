@@ -15,6 +15,13 @@ Once static files are deployed, you would deploy your web application code, incl
 
 You should configure your CDN to set HTTP headers to force your content to be cached for as long as possible. 
 
+Installation
+------------------
+
+```shell
+npm install hashly -g
+```
+
 Usage
 ------------------
 
