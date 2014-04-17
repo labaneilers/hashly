@@ -15,6 +15,13 @@ Once static files are deployed, you would deploy your web application code, incl
 
 You should configure your CDN to set HTTP headers to force your content to be cached for as long as possible. 
 
+Installation
+------------------
+
+```shell
+npm install hashly -g
+```
+
 Usage
 ------------------
 
@@ -34,6 +41,26 @@ options:
   --ignore-errors          Ignore errors. Otherwise, hashly will abort on the first error.
 ```
 
+Examples
+------------------
+
+Process the current directory in place:
+
+```shell
+hashly
+```
+
+Process the directory 'source' and copy hashed files to the 'processed' directory:
+
+```shell
+hashly ./source ./processed
+```
+
+Write the manifest in tab-delimited format:
+
+```shell
+hashly ./source ./processed -m "tab"
+```
 
 Image sizes
 ------------------
