@@ -22,7 +22,7 @@ module.exports = function (grunt) {
                 src: ["./test/**/*.unittests.js"]
             },
             options: {
-                reporter: "Spec",
+                reporter: "spec",
                 timeout: 20000
             }
         },
