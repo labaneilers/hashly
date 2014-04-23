@@ -1,4 +1,4 @@
-hashly
+hashly [![Build Status](https://secure.travis-ci.org/labaneilers/hashly.png?branch=master)](http://travis-ci.org/labaneilers/hashly)
 ======
 
 hashly is a build-time tool which enables cache-busting for static files (images, JavaScript, CSS, etc). 
