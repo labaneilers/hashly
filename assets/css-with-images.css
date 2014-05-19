@@ -1,0 +1,27 @@
+body {
+    background: silver;
+}
+
+.relative-quoted {
+	background-image: url("placeholder.jpeg");
+}
+
+.relative-unquoted {
+	background-image: url(placeholder.jpeg);
+}
+
+.root-relative-quoted {
+	background-image: url("/placeholder.jpeg");
+}
+
+.root-relative-unquoted {
+	background-image: url(/placeholder.jpeg);
+}
+
+.absolute-unquoted {
+	background-image: url(http://foo.com/placeholder.jpeg);
+}
+
+.absolute-quoted {
+	background-image: url("http://foo.com/placeholder.jpeg");
+}
