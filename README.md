@@ -37,7 +37,9 @@ options:
   -i, --include            A globbing expression. If specified, only matching files will be processed.
   -e, --exclude            A globbing expression. Any matching files will not be processed. Takes precedence over --include.
   -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
-                           Default is "json"
+                               Default is "json"
+  -s, --skip-css           Skip replacement of image paths in CSS files. If not specified, relative 
+                               (and root relative) image paths will be replaced with the hashed version.
   --ignore-errors          Ignore errors. Otherwise, hashly will abort on the first error.
 ```
 
