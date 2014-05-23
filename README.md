@@ -7,6 +7,8 @@ hashly copies a directory structure containing static files, inserting an MD5 ha
 
 This is a particularly elegant solution which allows zero-downtime deployments, with backwards AND forwards compatibility between different versions of your web application and their corresponding static files. Filename-based cache busting is much more reliable than using other techniques (i.e. querystrings with version numbers, 304 HTTP codes), and allows you to cache aggressively without fear of not being able to update static files. 
 
+Hashly can also update references to images in CSS files so that they point to the renamed version.
+
 Why hashly?
 ------------------
 hashly is used as a build-time task to process static files. Once the processing is done, the output can be deployed to web servers (or CDNs, or Amazon S3, etc) over any existing files. Because when a file's content changes, its filename changes, you don't have to worry about backwards compatibility between releases. Existing filenames would be left alone, and only new content would be deployed.
