@@ -13,28 +13,6 @@ var getMockPath = function (sep) {
 
 describe("hashly", function () {
 
-    describe("#getHashCode()", function () {
-
-        it("should return a hashcode and call readFileSync", function () {
-
-            var hashly = rewire("../lib/hashly");
-
-            var called = false;
-
-            hashly.__set__("fsutil", {
-                readFileSync: function () {
-                    called = true;
-                    return "abcdefg";
-                }
-            });
-
-            var method = hashly.__get__("getHashCode");
-
-            assert.equal(method("/ignore-this.css"), "7ac66c0f148de9519b8bd264312c4d64");
-            assert.isTrue(called);
-        });
-    });
-
     describe("#createManifestEntry()", function () {
 
         var getCreateManifestEntry = function (sep, hashedFileName, options) {
@@ -46,8 +24,10 @@ describe("hashly", function () {
                 }
             });
 
-            hashly.__set__("getHashCode", function () {
-                return "";
+            hashly.__set__("hashcodeGenerator", {
+                generateForFile: function () {
+                    return "";
+                }
             });
 
             hashly.__set__("path", getMockPath(sep));

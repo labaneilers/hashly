@@ -47,6 +47,9 @@ options:
                                without incurring the performance penalty of reprocessing existing files.
   -s, --skip-css           Skip replacement of image paths in CSS files. If not specified, relative 
                                (and root relative) image paths will be replaced with the hashed version.
+  -q, --quickhash          Use the file size for binary files instead of the file contents. This makes processing large binary
+                               files extremely quick, though at a (extremely slight) risk that a hashcode will not change when a 
+                               file is updated.
   --ignore-errors          Ignore errors. Otherwise, hashly will abort on the first error.
 ```
 
