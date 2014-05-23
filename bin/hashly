@@ -40,7 +40,7 @@ function readStdin(callback) {
 
 function main(files) {
     var args = parseArgs(process.argv.slice(2), {
-        "boolean": ["verbose", "clean", "ignore-errors", "help", "skip-css"],
+        "boolean": ["verbose", "clean", "ignore-errors", "help", "skip-css", "amend"],
         "string": ["exclude", "include", "manifest-format", "plugins"],
         "alias": {
             "verbose": "v",
@@ -50,7 +50,8 @@ function main(files) {
             "ignore-errors": "i",
             "help": "h",
             "plugins": "p",
-            "skip-css": "s"
+            "skip-css": "s",
+            "amend": "a"
         }
     });
 
@@ -80,7 +81,8 @@ function main(files) {
         include: args.include || null,
         manifestFormat: args["manifest-format"],
         continueOnError: args["ignore-errors"] || false,
-        processCss: !args["skip-css"]
+        processCss: !args["skip-css"],
+        amend: args["amend"]
     };
 
     var exitCode = 0;

@@ -29,5 +29,11 @@ exports.processFile = function (manifestEntry) {
         return {};
     }
 
+    // Optimization: the data already exists in the entry.
+    // We're probably in amending mode. Short circuit.
+    if (manifestEntry.width && manifestEntry.height) {
+        return {};
+    }
+
     return sizeOf(manifestEntry.pathPhysical);
 };
