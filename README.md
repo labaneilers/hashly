@@ -30,8 +30,10 @@ Usage
 ```
 usage: hashly [option option=parameter ...] <source> [destination]
 
+Source refers to the root directory from which root relative paths will be based.
 If source is omitted, the current working directory will be used.
 If destination is omitted, hashed files will be written alongside the source files.
+A list of files can be piped in to hashly from stdin.
 
 options:
   -h, --help               Print help (this message) and exit.
@@ -40,6 +42,9 @@ options:
   -e, --exclude            A globbing expression. Any matching files will not be processed. Takes precedence over --include.
   -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
                                Default is "json"
+  -a, --amend              Instructs hashly to amend an existing manifest, where it would normally delete and recreate it
+                               from scratch. This is useful for incrementally adding to a large filesystem
+                               without incurring the performance penalty of reprocessing existing files.
   -s, --skip-css           Skip replacement of image paths in CSS files. If not specified, relative 
                                (and root relative) image paths will be replaced with the hashed version.
   --ignore-errors          Ignore errors. Otherwise, hashly will abort on the first error.
@@ -64,6 +69,12 @@ Write the manifest in tab-delimited format:
 
 ```shell
 hashly ./source ./processed -m "tab"
+```
+
+Update an directory that already has a manifest with new files:
+
+```shell
+find ./source -mtime -1 | hashly ./source --amend
 ```
 
 Image sizes
