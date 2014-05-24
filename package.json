@@ -1,6 +1,6 @@
 {
     "name": "hashly",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Renames static files with a hashcode for cache busting",
     "directories": {
         "lib": "./lib"
