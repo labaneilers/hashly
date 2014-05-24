@@ -19,7 +19,7 @@ You should configure your CDN to set HTTP headers to force your content to be ca
 
 Installation
 ------------------
-hashly requires node.js(http://nodejs.org) version 0.10.0 or higher.
+hashly requires [node.js](http://nodejs.org) version 0.10.0 or higher.
 
 Once you have node.js, run the following:
 
