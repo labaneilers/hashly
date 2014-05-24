@@ -25,6 +25,7 @@ function readStdin(callback) {
             data += chunk;
         }
     });
+
     stdin.on("end", function () {
         var files = data.split("\n")
             .filter(function (f) {
@@ -41,7 +42,7 @@ function readStdin(callback) {
 function main(files) {
     var args = parseArgs(process.argv.slice(2), {
         "boolean": ["verbose", "clean", "ignore-errors", "help", "skip-css", "amend", "quickhash"],
-        "string": ["exclude", "include", "manifest-format", "plugins"],
+        "string": ["exclude", "include", "manifest-format", "manifest-path", "plugins"],
         "alias": {
             "verbose": "v",
             "clean": "c",
@@ -81,6 +82,7 @@ function main(files) {
         exclude: args.exclude || null,
         include: args.include || null,
         manifestFormat: args["manifest-format"],
+        manifestPath: args["manifest-path"] ? path.resolve(cwd, args["manifest-path"]) : null,
         continueOnError: args["ignore-errors"] || false,
         processCss: !args["skip-css"],
         quickhash: args["quickhash"],
