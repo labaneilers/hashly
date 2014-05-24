@@ -1,6 +1,6 @@
 {
     "name": "hashly",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Renames static files with a hashcode for cache busting",
     "directories": {
         "lib": "./lib"
@@ -37,7 +37,11 @@
     },
     "keywords": [
         "javascript",
-        "cache busting"
+        "cache busting",
+        "static files",
+        "deployment",
+        "hashcode",
+        "CDN"
     ],
     "author": {
         "name": "Laban Eilers",
