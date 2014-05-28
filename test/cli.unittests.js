@@ -5,6 +5,10 @@ var rewire = require("rewire");
 
 describe("cli", function () {
 
+    var unixify = function (filePath) {
+        return filePath.replace(/^[A-Z]{1}\:/, "").replace(/\\/g, "/");
+    };
+
     describe("#processArgs()", function () {
 
         var runProcessArgs = function (args, rootPath) {
@@ -19,16 +23,16 @@ describe("cli", function () {
             var result = runProcessArgs(["./sourcedir", "--clean"]);
 
             assert.isTrue(result.clean);
-            assert.equal(result.sourceDir, "/a/b/c/sourcedir");
-            assert.equal(result.targetDir, "/a/b/c/sourcedir");
+            assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
+            assert.equal(unixify(result.targetDir), "/a/b/c/sourcedir");
         });
 
         it("should return targetDir if passed 2 path args", function () {
             var result = runProcessArgs(["./sourcedir", "./targetdir"]);
 
             assert.isFalse(result.clean);
-            assert.equal(result.sourceDir, "/a/b/c/sourcedir");
-            assert.equal(result.targetDir, "/a/b/c/targetdir");
+            assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
+            assert.equal(unixify(result.targetDir), "/a/b/c/targetdir");
         });
 
         it("should return exclude/include args", function () {
@@ -37,8 +41,8 @@ describe("cli", function () {
             assert.isFalse(result.clean);
             assert.equal(result.options.include, "*.png,*.jpg");
             assert.equal(result.options.exclude, "*.xml,*.config");
-            assert.equal(result.sourceDir, "/a/b/c/sourcedir");
-            assert.equal(result.targetDir, "/a/b/c/sourcedir");
+            assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
+            assert.equal(unixify(result.targetDir), "/a/b/c/sourcedir");
         });
 
         it("should return exclude/include args", function () {
@@ -46,8 +50,8 @@ describe("cli", function () {
 
             assert.isFalse(result.clean);
             assert.equal(result.plugins, "./pluginsdir");
-            assert.equal(result.sourceDir, "/a/b/c/sourcedir");
-            assert.equal(result.targetDir, "/a/b/c/sourcedir");
+            assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
+            assert.equal(unixify(result.targetDir), "/a/b/c/sourcedir");
         });
     });
 });
