@@ -1,2 +1,6 @@
 assets
 test
+gruntfile.js
+hashly.sublime-project
+.travis.yml
+.jshintrc
