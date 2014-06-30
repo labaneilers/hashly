@@ -35,5 +35,11 @@ exports.processFile = function (manifestEntry) {
         return {};
     }
 
-    return sizeOf(manifestEntry.pathPhysical);
+    try {
+        return sizeOf(manifestEntry.pathPhysical);
+    } catch (ex) {
+        var err =  new Error(ex.message + ": " + manifestEntry.pathPhysical);
+        err.innerError = ex;
+        throw err;
+    }
 };
