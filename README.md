@@ -75,6 +75,12 @@ Process the directory 'source' and copy hashed files to the 'processed' director
 hashly ./source ./processed
 ```
 
+Process all .css files in directory 'source' and copy hashed files to the 'processed' directory:
+
+```shell
+hashly ./source ./processed --include="**/*.css"
+```
+
 Write the manifest in tab-delimited format:
 
 ```shell
