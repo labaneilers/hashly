@@ -53,5 +53,10 @@ describe("cli", function () {
             assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
             assert.equal(unixify(result.targetDir), "/a/b/c/sourcedir");
         });
+
+        it("should return baseDir args --base-dir passed", function () {
+            var result = runProcessArgs(["/a/b/c", "--base-dir=/a"]);
+            assert.equal(result.options.baseDir, "/a");
+        });
     });
 });

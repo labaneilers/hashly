@@ -45,6 +45,8 @@ options:
   -e, --exclude            A globbing expression. Any matching files will not be processed. Takes precedence over --include.
   -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
                                Default is "json"
+  -b, --base-dir           Specifies the path to a folder. If specified, all paths included in the manifest will be 
+                               relative to this path.
   --manifest-path          Specifies a path for the manifest file. If not specified, the manifest is named "manifest.{ext}"
                                and is placed in the destination directory root.
   -a, --amend              Instructs hashly to amend an existing manifest, where it would normally delete and recreate it

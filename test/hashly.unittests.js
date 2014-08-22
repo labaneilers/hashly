@@ -284,4 +284,73 @@ describe("hashly", function () {
             assert.isTrue(logErrorCalled);
         });
     });
+
+    describe("#processDirectory()", function () {
+       
+        var getHashly = function (expectedDir) {
+            var hashcodeGenerator = rewire("../lib/hashcode-generator");
+            var hashly = rewire("../lib/hashly");
+                    
+            hashcodeGenerator.__set__("fsutil", {
+                readFileSync: function () {
+                    return "abcdefg";
+                }
+            }); 
+            hashly.__set__("hashcodeGenerator", hashcodeGenerator);
+
+            var fsutil = hashly.__get__("fsutil");
+            hashly.__set__("fsutil", {
+                recurseDirSync: function (directory, processFile) {
+                    assert.equal(directory, expectedDir);
+                    processFile(expectedDir + "/file1.png");
+                },
+                existsSync: function (file) {
+                    return true;
+                },
+                deleteSync: function (file) {
+                },
+                writeFileSync: function (file, data) {
+                    assert.equal(file, "/out/manifest.json");
+                },
+                copySync : function (from, to) {
+                },
+                ensureUrlSeparators: function (path) {
+                    return fsutil.ensureUrlSeparators(path);
+                }
+            });
+            
+            hashly.__set__("getManifestPath", function (targetDir, serializer) {
+                assert.equal(targetDir, "/out");
+                return "/out/manifest.json";
+            });
+            
+            var createManifest = hashly.__get__("createManifest");
+            hashly.__set__("createManifest", function (files, baseDir, targetDir, existingManifestData) {
+                assert.equal(baseDir, "/a");
+                assert.equal(targetDir, "/out");
+                var result = createManifest(files, baseDir, targetDir, existingManifestData);
+                assert.equal(result.manifest.length, 1);
+                // Path is relative to baseDir from options.
+                assert.equal(result.manifest[0].path, "/b/c/file1.png");
+                assert.equal(result.manifest[0].pathPhysical, "/a/b/c/file1.png");
+                assert.equal(result.manifest[0].hashedPath.indexOf("/b/c/file1"), 0);
+                return result;
+            });
+            
+            return hashly;
+        };
+
+        it("should generate manifest paths relative to base-dir.", function () {
+            
+            var options = {
+                baseDir: "/a",
+                manifestFormat: "json",
+            };
+            
+            var dir = "/a/b/c";
+            var exitCode = getHashly(dir).processDirectory( dir, "/out", options);
+         
+            assert.equal(exitCode, 0);
+        });
+    });
 });
