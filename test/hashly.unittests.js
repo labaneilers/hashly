@@ -295,7 +295,8 @@ describe("hashly", function () {
                 readFileSync: function () {
                     return "abcdefg";
                 }
-            }); 
+            });
+
             hashly.__set__("hashcodeGenerator", hashcodeGenerator);
 
             var fsutil = hashly.__get__("fsutil");
@@ -304,22 +305,22 @@ describe("hashly", function () {
                     assert.equal(directory, expectedDir);
                     processFile(expectedDir + "/file1.png");
                 },
-                existsSync: function (file) {
+                existsSync: function () {
                     return true;
                 },
-                deleteSync: function (file) {
+                deleteSync: function () {
                 },
-                writeFileSync: function (file, data) {
+                writeFileSync: function (file) {
                     assert.equal(file, "/out/manifest.json");
                 },
-                copySync : function (from, to) {
+                copySync : function () {
                 },
                 ensureUrlSeparators: function (path) {
                     return fsutil.ensureUrlSeparators(path);
                 }
             });
             
-            hashly.__set__("getManifestPath", function (targetDir, serializer) {
+            hashly.__set__("getManifestPath", function (targetDir) {
                 assert.equal(targetDir, "/out");
                 return "/out/manifest.json";
             });
