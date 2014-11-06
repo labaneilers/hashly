@@ -294,12 +294,12 @@ describe("hashly", function () {
             
             var copied = false;            
             hashly.__set__("fsutil", {
-                existsSync: function (file) {
+                existsSync: function () {
                     return true;
                 },
-                deleteSync: function (file) {
+                deleteSync: function () {
                 },
-                writeFileSync: function (file, data) {
+                writeFileSync: function () {
                 },
                 copySync: function (source, dest) {
                     assert.equal(unixify(source), "/a/b/c/file.png");
