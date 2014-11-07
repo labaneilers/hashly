@@ -35,16 +35,19 @@ describe("cli", function () {
             assert.equal(unixify(result.targetDir), "/a/b/c/targetdir");
         });
 
-        it("should return exclude/include args", function () {
-            var result = runProcessArgs(["./sourcedir", "--include=*.png,*.jpg", "--exclude=*.xml,*.config"]);
+        it("should return exclude/include/passthrough args", function () {
+            var result = runProcessArgs(["./sourcedir", "--include=*.png,*.jpg", "--exclude=*.xml,*.config", "--passthrough=*.zip,*.rar", "--passthrough=*.foo"]);
 
             assert.isFalse(result.clean);
             assert.equal(result.options.include, "*.png,*.jpg");
             assert.equal(result.options.exclude, "*.xml,*.config");
+            assert.equal(result.options.passthrough[0], "*.zip,*.rar");
+            assert.equal(result.options.passthrough[1], "*.foo");
             assert.equal(unixify(result.sourceDir), "/a/b/c/sourcedir");
             assert.equal(unixify(result.targetDir), "/a/b/c/sourcedir");
         });
-
+        
+        
         it("should return exclude/include args", function () {
             var result = runProcessArgs(["./sourcedir", "--plugins=./pluginsdir"]);
 

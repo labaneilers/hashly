@@ -283,6 +283,38 @@ describe("hashly", function () {
             assert.equal(exitCode, -1);
             assert.isTrue(logErrorCalled);
         });
+
+        it("should copy passthrough files without renaming", function () {
+            
+            var unixify = function (filePath) {
+                return filePath.replace(/^[A-Z]{1}\:/, "").replace(/\\/g, "/");
+            };
+
+            var hashly = rewire("../lib/hashly");
+            
+            var copied = false;            
+            hashly.__set__("fsutil", {
+                existsSync: function () {
+                    return true;
+                },
+                deleteSync: function () {
+                },
+                writeFileSync: function () {
+                },
+                copySync: function (source, dest) {
+                    assert.equal(unixify(source), "/a/b/c/file.png");
+                    assert.equal(unixify(dest), "/x/y/c/file.png");
+                    copied = true;
+                }
+            });
+            
+            var options = {
+                passthrough: "**/*.png"
+            };
+
+            hashly.processFiles(["/a/b/c/file.png"], "/a/b", "/x/y", options);
+            assert.isTrue(copied);
+        });
     });
 
     describe("#processDirectory()", function () {
