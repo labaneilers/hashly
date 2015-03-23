@@ -116,8 +116,8 @@ describe("hashly", function () {
             });
             
             var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
-            
-            assert.equal(true, pluginCalled );
+            assert.equal(entry.pathPhysical, "/a/b/c/file.png");
+            assert.equal(pluginCalled, true);
         });
     });
 
