@@ -34,7 +34,7 @@ describe("hashly", function () {
 
             hashly.__set__("_options", options || {});
 
-            return hashly.__get__("createManifestEntry");
+            return hashly.__get__("createAndAugmentManifestEntry");
         };
 
         it("should properly resolve virtual and physical paths in source and target directories on unix", function () {
@@ -96,6 +96,28 @@ describe("hashly", function () {
             var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
 
             assert.equal(entry.pluginFileName, "plugin:/c/file.png");
+        });
+
+        it("should swallow plugin error if --ignore-plugin-error is true", function () {
+            
+            var pluginCalled = true;
+            var mockPlugin = {
+                processFile: function () {
+                    pluginCalled = true;
+                    throw new Error("Oops");
+                }
+            };
+            
+            var method = getCreateManifestEntry("/", "/alt/b/c/file-hc12345.png", {
+                plugins: [
+                    mockPlugin
+                ],
+                continueOnPluginError: true
+            });
+            
+            var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
+            assert.equal(entry.pathPhysical, "/a/b/c/file.png");
+            assert.equal(pluginCalled, true);
         });
     });
 

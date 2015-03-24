@@ -1,15 +1,8 @@
-"use strict";
+    "use strict";
 
-// This is a sample plugin that simply writes the file extension of each file to the manifest
 
 var path = require("path");
 var sizeOf = require("image-size");
-
-// Data contains:
-// * path
-// * pathPhysical
-// * hashedPath
-// * hashedPathPhysical
 
 // File types that should have sizes calculated and included in the manifest json
 var _imageTypes = {
@@ -35,11 +28,5 @@ exports.processFile = function (manifestEntry) {
         return {};
     }
 
-    try {
-        return sizeOf(manifestEntry.pathPhysical);
-    } catch (ex) {
-        var err =  new Error(ex.message + ": " + manifestEntry.pathPhysical);
-        err.innerError = ex;
-        throw err;
-    }
+    return sizeOf(manifestEntry.pathPhysical);
 };
