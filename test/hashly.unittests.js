@@ -102,7 +102,7 @@ describe("hashly", function () {
             
             var pluginCalled = true;
             var mockPlugin = {
-                processFile: function (entry) {
+                processFile: function () {
                     pluginCalled = true;
                     throw new Error("Oops");
                 }
