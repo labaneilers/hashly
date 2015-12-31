@@ -4,28 +4,28 @@ var assert = require("chai").assert;
 var rewire = require("rewire");
 var util = require("util");
 
-var getMockPath = function (sep) {
+var getMockPath = function(sep) {
     var path = require("path");
     return util._extend({}, path, {
         sep: sep
     });
 };
 
-describe("hashly", function () {
+describe("hashly", function() {
 
-    describe("#createManifestEntry()", function () {
+    describe("#createManifestEntry()", function() {
 
-        var getCreateManifestEntry = function (sep, hashedFileName, options) {
+        var getCreateManifestEntry = function(sep, hashedFileName, options) {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("hashpattern", {
-                getHashedFileName: function () {
+                getHashedFileName: function() {
                     return hashedFileName;
                 }
             });
 
             hashly.__set__("hashcodeGenerator", {
-                generateForFile: function () {
+                generateForFile: function() {
                     return "";
                 }
             });
@@ -37,7 +37,7 @@ describe("hashly", function () {
             return hashly.__get__("createAndAugmentManifestEntry");
         };
 
-        it("should properly resolve virtual and physical paths in source and target directories on unix", function () {
+        it("should properly resolve virtual and physical paths in source and target directories on unix", function() {
             var method = getCreateManifestEntry("/", "/alt/b/c/file-hc12345.png");
             var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
 
@@ -57,7 +57,7 @@ describe("hashly", function () {
         //     assert.equal(entry.hashedPathPhysical, "C:\\alt\\b\\c\\file-hc12345.png");
         // });
 
-        it("should generate matching pathPhysical and hashedPathPhysical when source and target are the same on unix", function () {
+        it("should generate matching pathPhysical and hashedPathPhysical when source and target are the same on unix", function() {
             var method = getCreateManifestEntry("/", "/a/b/c/file-hc12345.png");
             var entry = method("/a/b/c/file.png", "/a/b", "/a/b");
 
@@ -77,10 +77,10 @@ describe("hashly", function () {
         //     assert.equal(entry.hashedPathPhysical, "C:\\a\\b\\c\\file-hc12345.png");
         // });
 
-        it("should call specified plugins and append their output to the manifestEntry", function () {
+        it("should call specified plugins and append their output to the manifestEntry", function() {
 
             var mockPlugin = {
-                processFile: function (entry) {
+                processFile: function(entry) {
                     return {
                         pluginFileName: "plugin:" + entry.path
                     };
@@ -98,47 +98,50 @@ describe("hashly", function () {
             assert.equal(entry.pluginFileName, "plugin:/c/file.png");
         });
 
-        it("should swallow plugin error if --ignore-plugin-error is true", function () {
-            
+        it("should swallow plugin error if --ignore-plugin-error is true", function() {
+
             var pluginCalled = true;
             var mockPlugin = {
-                processFile: function () {
+                processFile: function() {
                     pluginCalled = true;
                     throw new Error("Oops");
                 }
             };
-            
+
             var method = getCreateManifestEntry("/", "/alt/b/c/file-hc12345.png", {
                 plugins: [
                     mockPlugin
                 ],
                 continueOnPluginError: true
             });
-            
+
             var entry = method("/a/b/c/file.png", "/a/b", "/alt/b");
             assert.equal(entry.pathPhysical, "/a/b/c/file.png");
             assert.equal(pluginCalled, true);
         });
     });
 
-    describe("#createManifest()", function () {
+    describe("#createManifest()", function() {
 
-        it("should call copySync and return a manifest", function () {
+        it("should call copySync and return a manifest", function() {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("fsutil", {
-                recurseDirSync: function (sourceDir, processFile) {
+                recurseDirSync: function(sourceDir, processFile) {
                     assert.equal(sourceDir, "/a/b");
 
                     processFile("/a/b/c/file.png");
                 },
-                copySync: function (source, target) {
+                copySync: function(source, target) {
                     assert.equal(source, "/a/b/c/file.png");
                     assert.equal(target, "/alt/b/c/b/file-hc12345.png");
+                },
+                existsSync: function() {
+                    return false;
                 }
             });
 
-            hashly.__set__("createManifestEntry", function (fullPath /*, sourceDir, targetDir */ ) {
+            hashly.__set__("createManifestEntry", function(fullPath /*, sourceDir, targetDir */ ) {
                 assert.equal(fullPath, "/a/b/c/file.png");
 
                 return {
@@ -160,11 +163,11 @@ describe("hashly", function () {
 
         });
 
-        it("should return an empty manifest if filters are applied", function () {
+        it("should return an empty manifest if filters are applied", function() {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("fsutil", {
-                recurseDirSync: function (sourceDir, processFile) {
+                recurseDirSync: function(sourceDir, processFile) {
                     assert.equal(sourceDir, "/a/b");
 
                     processFile("/a/b/c/file.png");
@@ -172,7 +175,7 @@ describe("hashly", function () {
             });
 
             hashly.__set__("_options", {
-                shouldBeExcluded: function ( /* fullPath */ ) {
+                shouldBeExcluded: function( /* fullPath */ ) {
                     return true;
                 }
             });
@@ -185,16 +188,16 @@ describe("hashly", function () {
         });
     });
 
-    describe("#processFiles()", function () {
+    describe("#processFiles()", function() {
 
-        var getHashly = function () {
+        var getHashly = function() {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("serializerFactory", {
-                getSerializer: function (manifestFormat) {
+                getSerializer: function(manifestFormat) {
                     assert.equal(manifestFormat, "json");
                     return {
-                        serialize: function (trimmedManifest) {
+                        serialize: function(trimmedManifest) {
                             assert.isArray(trimmedManifest);
                             assert.equal(trimmedManifest.length, 1);
                             assert.equal(trimmedManifest[0].path, "/c/foo.png");
@@ -205,31 +208,31 @@ describe("hashly", function () {
             });
 
             hashly.__set__("fsutil", {
-                recurseDirSync: function (directory, processFile) {
+                recurseDirSync: function(directory, processFile) {
                     assert.equal(directory, "/a/b");
                     processFile("/a/b/c/file.png");
                 },
-                existsSync: function (file) {
+                existsSync: function(file) {
                     assert.equal(file, "/a/b");
                     return true;
                 },
-                deleteSync: function (file) {
+                deleteSync: function(file) {
                     assert.equal(file, "/alt/b/manifest.json");
                 },
-                writeFileSync: function (file, data) {
+                writeFileSync: function(file, data) {
                     assert.equal(file, "/alt/b/manifest.json");
                     assert.equal(data, "abcdefg");
                 }
             });
 
-            hashly.__set__("getManifestPath", function (targetDir, serializer) {
+            hashly.__set__("getManifestPath", function(targetDir, serializer) {
                 assert.equal(targetDir, "/alt/b");
                 assert.property(serializer, "serialize");
 
                 return "/alt/b/manifest.json";
             });
 
-            hashly.__set__("createManifest", function (files, sourceDir, targetDir) {
+            hashly.__set__("createManifest", function(files, sourceDir, targetDir) {
                 assert.equal(sourceDir, "/a/b");
                 assert.equal(targetDir, "/alt/b");
 
@@ -247,7 +250,7 @@ describe("hashly", function () {
             return hashly;
         };
 
-        it("should call writeFileSync with manifest data", function () {
+        it("should call writeFileSync with manifest data", function() {
 
             var options = {
                 manifestFormat: "json"
@@ -258,20 +261,44 @@ describe("hashly", function () {
             assert.equal(exitCode, 0);
         });
 
-        it("should return -1 and log an error if createManifest throws an exception", function () {
+        it("should check for sourcemap file and modify the js file with the hashed map file name", function() {
+            var hashly = rewire("../lib/hashly");
+            var _fsutil = rewire("../lib/file-system-util");
+            var options = {
+                manifestFormat: "json",
+                sourcemapURLPrefix: "https://s3-us-west-2.amazonaws.com/vistacore-testing-bucket/dir"
+            };
+            _fsutil.writeFileSync = function(file, data) {
+                if(file.indexOf("test\\fixtures\\aggregated_min-hc") > -1){
+                    assert.isTrue(data.match("https://s3-us-west-2.amazonaws.com/vistacore-testing-bucket/dir/test/fixtures/aggregated_min.js-") !== null );
+                }
+            };
+            hashly.__set__("fsutil", _fsutil);
+            var exitCode = hashly.processFiles(["./test/fixtures/aggregated_min.js"], ".", "./alt/b", options);
+            assert.equal(exitCode, 0);
+            _fsutil.writeFileSync = function(file, data) {
+                if(file.match("aggregated_min-hc") !== null){
+                    assert.isTrue(data.match("https://s3-us-west-2.amazonaws.com/vistacore-testing-bucket/dir/aggregated_min.js-") !== null );
+                }
+            };
+            exitCode = hashly.processFiles(["./test/fixtures/aggregated_min.js"], "./test/fixtures/", "./alt/b", options);
+            assert.equal(exitCode, 0);
+
+        });
+        it("should return -1 and log an error if createManifest throws an exception", function() {
 
             var logErrorCalled = false;
 
             var options = {
                 manifestFormat: "json",
-                logError: function (msg) {
+                logError: function(msg) {
                     assert.isTrue(msg.indexOf("Something bad happened") >= 0);
                     logErrorCalled = true;
                 }
             };
 
             var hashly = getHashly();
-            hashly.__set__("createManifest", function () {
+            hashly.__set__("createManifest", function() {
                 throw new Error("Something bad happened");
             });
 
@@ -281,11 +308,11 @@ describe("hashly", function () {
             assert.isTrue(logErrorCalled);
         });
 
-        it("should return -1 and log an error if the source directory doesn't exist", function () {
+        it("should return -1 and log an error if the source directory doesn't exist", function() {
             var hashly = rewire("../lib/hashly");
 
             hashly.__set__("fsutil", {
-                existsSync: function (file) {
+                existsSync: function(file) {
                     assert.equal(file, "/a/b");
                     return false;
                 }
@@ -294,7 +321,7 @@ describe("hashly", function () {
             var logErrorCalled = false;
 
             var options = {
-                logError: function (msg) {
+                logError: function(msg) {
                     assert.isTrue(msg.indexOf("/a/b") >= 0);
                     logErrorCalled = true;
                 }
@@ -306,30 +333,28 @@ describe("hashly", function () {
             assert.isTrue(logErrorCalled);
         });
 
-        it("should copy passthrough files without renaming", function () {
-            
-            var unixify = function (filePath) {
+        it("should copy passthrough files without renaming", function() {
+
+            var unixify = function(filePath) {
                 return filePath.replace(/^[A-Z]{1}\:/, "").replace(/\\/g, "/");
             };
 
             var hashly = rewire("../lib/hashly");
-            
-            var copied = false;            
+
+            var copied = false;
             hashly.__set__("fsutil", {
-                existsSync: function () {
+                existsSync: function() {
                     return true;
                 },
-                deleteSync: function () {
-                },
-                writeFileSync: function () {
-                },
-                copySync: function (source, dest) {
+                deleteSync: function() {},
+                writeFileSync: function() {},
+                copySync: function(source, dest) {
                     assert.equal(unixify(source), "/a/b/c/file.png");
                     assert.equal(unixify(dest), "/x/y/c/file.png");
                     copied = true;
                 }
             });
-            
+
             var options = {
                 passthrough: "**/*.png"
             };
@@ -339,14 +364,14 @@ describe("hashly", function () {
         });
     });
 
-    describe("#processDirectory()", function () {
-       
-        var getHashly = function (expectedDir) {
+    describe("#processDirectory()", function() {
+
+        var getHashly = function(expectedDir) {
             var hashcodeGenerator = rewire("../lib/hashcode-generator");
             var hashly = rewire("../lib/hashly");
-                    
+
             hashcodeGenerator.__set__("fsutil", {
-                readFileSync: function () {
+                readFileSync: function() {
                     return "abcdefg";
                 }
             });
@@ -355,32 +380,30 @@ describe("hashly", function () {
 
             var fsutil = hashly.__get__("fsutil");
             hashly.__set__("fsutil", {
-                recurseDirSync: function (directory, processFile) {
+                recurseDirSync: function(directory, processFile) {
                     assert.equal(directory, expectedDir);
                     processFile(expectedDir + "/file1.png");
                 },
-                existsSync: function () {
-                    return true;
+                existsSync: function(file) {
+                    return (file.match(/\.map?/)) ? false : true;
                 },
-                deleteSync: function () {
-                },
-                writeFileSync: function (file) {
+                deleteSync: function() {},
+                writeFileSync: function(file) {
                     assert.equal(file, "/out/manifest.json");
                 },
-                copySync : function () {
-                },
-                ensureUrlSeparators: function (path) {
+                copySync: function() {},
+                ensureUrlSeparators: function(path) {
                     return fsutil.ensureUrlSeparators(path);
                 }
             });
-            
-            hashly.__set__("getManifestPath", function (targetDir) {
+
+            hashly.__set__("getManifestPath", function(targetDir) {
                 assert.equal(targetDir, "/out");
                 return "/out/manifest.json";
             });
-            
+
             var createManifest = hashly.__get__("createManifest");
-            hashly.__set__("createManifest", function (files, baseDir, targetDir, existingManifestData) {
+            hashly.__set__("createManifest", function(files, baseDir, targetDir, existingManifestData) {
                 assert.equal(baseDir, "/a");
                 assert.equal(targetDir, "/out");
                 var result = createManifest(files, baseDir, targetDir, existingManifestData);
@@ -391,21 +414,22 @@ describe("hashly", function () {
                 assert.equal(result.manifest[0].hashedPath.indexOf("/b/c/file1"), 0);
                 return result;
             });
-            
+
             return hashly;
         };
 
-        it("should generate manifest paths relative to base-dir.", function () {
-            
+        it("should generate manifest paths relative to base-dir.", function() {
+
             var options = {
                 baseDir: "/a",
                 manifestFormat: "json",
             };
-            
+
             var dir = "/a/b/c";
-            var exitCode = getHashly(dir).processDirectory( dir, "/out", options);
-         
+            var exitCode = getHashly(dir).processDirectory(dir, "/out", options);
+
             assert.equal(exitCode, 0);
         });
     });
+
 });
