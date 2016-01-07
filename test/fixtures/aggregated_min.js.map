@@ -1,0 +1,1 @@
+{"version":3,"sources":["first.js","second.js"],"names":["console","log"],"mappings":"AAAAA,QAAQC,IAAI,MCAZD,SAAQC,IAAI","file":"aggregated_min.js","sourcesContent":["console.log(\"one\");","console.log(\"two\");"]}
