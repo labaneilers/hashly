@@ -10,8 +10,9 @@ options:
   -v, --verbose            Emit verbose output
   -i, --include            A globbing expression. If specified, only matching files will be processed.
   -e, --exclude            A globbing expression. Any matching files will not be processed. Takes precedence over --include.
-  -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
-                               Default is "json"
+  -m, --manifest-format    The format for the manifest file. Currently supports "json", "json-object" (json with original
+                               path as key) or "tab" (tab delimited).
+                               Default is "json".
   -b, --base-dir           Specifies the path to a folder. If specified, all paths included in the manifest will be 
                                prefixed with this path.
   --manifest-path          Specifies a path for the manifest file. If not specified, the manifest is named "manifest.{ext}"

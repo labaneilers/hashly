@@ -45,8 +45,9 @@ options:
   -e, --exclude            A globbing expression. Any matching files will not be processed. Takes precedence over --include.
   --passthrough            A globbing expression. Any matching files will be copied as-is to the destination folder.  
                                Has no effect if the destination is the same as the source.
-  -m, --manifest-format    The format for the manifest file. Currently supports "json" or "tab" (tab delimited). 
-                               Default is "json"
+  -m, --manifest-format    The format for the manifest file. Currently supports "json", "json-object" (json with original
+                               path as key) or "tab" (tab delimited).
+                               Default is "json".
   -b, --base-dir           Specifies the path to a folder. If specified, all paths included in the manifest will be 
                                relative to this path.
   --manifest-path          Specifies a path for the manifest file. If not specified, the manifest is named "manifest.{ext}"
