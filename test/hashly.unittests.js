@@ -18,12 +18,6 @@ describe("hashly", function() {
         var getCreateManifestEntry = function(sep, hashedFileName, options) {
             var hashly = rewire("../lib/hashly");
 
-            hashly.__set__("hashpattern", {
-                getHashedFileName: function() {
-                    return hashedFileName;
-                }
-            });
-
             hashly.__set__("hashcodeGenerator", {
                 generateForFile: function() {
                     return "";
@@ -32,7 +26,15 @@ describe("hashly", function() {
 
             hashly.__set__("path", getMockPath(sep));
 
-            hashly.__set__("_options", options || {});
+            var opts = util._extend(options || {}, {
+                hashpattern: {
+                    getHashedFileName: function() {
+                        return hashedFileName;
+                    }
+                }
+            });
+
+            hashly.__set__("_options", opts);
 
             return hashly.__get__("createAndAugmentManifestEntry");
         };
@@ -152,7 +154,13 @@ describe("hashly", function() {
                 };
             });
 
-            hashly.__set__("_options", {});
+            hashly.__set__("_options", {
+                hashpattern: {
+                    isHashedFile: function() {
+                        return false;
+                    }
+                }
+            });
 
             var createManifest = hashly.__get__("createManifest");
 
