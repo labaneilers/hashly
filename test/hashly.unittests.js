@@ -293,6 +293,32 @@ describe("hashly", function() {
             assert.equal(exitCode, 0);
 
         });
+        it("should check for sourcemap file and modify the js file with the hashed map file name with and without the path", function() {
+            var hashly = rewire("../lib/hashly");
+            var _fsutil = rewire("../lib/file-system-util");
+            var options = {
+                manifestFormat: "json",
+                sourcemapIncludePath: false
+            };
+            _fsutil.writeFileSync = function(file, data) {
+                if(file.indexOf("test\\fixtures\\aggregated_min-hc") > -1){
+                    assert.isTrue(data.match("//# sourceMappingURL=aggregated_min.js-") !== null );
+                }
+            };
+            hashly.__set__("fsutil", _fsutil);
+            var exitCode = hashly.processFiles(["./test/fixtures/aggregated_min.js"], ".", "./alt/b", options);
+            assert.equal(exitCode, 0);
+
+            options.sourcemapIncludePath = true;
+            _fsutil.writeFileSync = function(file, data) {
+                if(file.match("aggregated_min-hc") !== null){
+                    assert.isTrue(data.match("//# sourceMappingURL=/test/fixtures/aggregated_min.js-") !== null );
+                }
+            };
+            exitCode = hashly.processFiles(["./test/fixtures/aggregated_min.js"], ".", "./alt/b", options);
+            assert.equal(exitCode, 0);
+
+        });
         it("should return -1 and log an error if createManifest throws an exception", function() {
 
             var logErrorCalled = false;
